@@ -19,5 +19,5 @@ Route::get('/', function () {
 
 Route::get('/test', function () {
 
-    dd('hi haile');
+    dd('hi haile and frezer');
 });
