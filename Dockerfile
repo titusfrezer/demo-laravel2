@@ -49,6 +49,8 @@ RUN mkdir -p /run/php/ && chmod 755 /run/php/
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader
 
+RUN php artisan migrate
+
 # Expose ports
 EXPOSE 80
 
