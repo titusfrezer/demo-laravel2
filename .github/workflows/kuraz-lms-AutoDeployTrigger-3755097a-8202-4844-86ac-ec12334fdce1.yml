@@ -1,0 +1,42 @@
+name: Trigger auto deployment for kuraz-lms
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/kuraz-lms-AutoDeployTrigger-3755097a-8202-4844-86ac-ec12334fdce1.yml'
+
+  # Allow mannually trigger 
+  workflow_dispatch:
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.KURAZLMS_AZURE_CREDENTIALS }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: kurazlms.azurecr.io
+          registryUsername: ${{ secrets.KURAZLMS_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.KURAZLMS_REGISTRY_PASSWORD }}
+          containerAppName: kuraz-lms
+          resourceGroup: kuraz-production
+          imageToBuild: kurazlms.azurecr.io/kuraz-lms:${{ github.sha }}
+          dockerfilePath: Dockerfile
+
+     
+
