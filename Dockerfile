@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     nginx \
     supervisor \
+    zip \
+    unzip \
     php8.1 \
     php8.1-cli \
     php8.1-common \
