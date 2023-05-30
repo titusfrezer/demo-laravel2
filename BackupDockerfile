@@ -1,0 +1,55 @@
+# Use the official PHP image as the base image
+FROM php:8.1-fpm-alpine
+
+# Update and install dependencies
+RUN apk update && apk add --no-cache \
+    autoconf \
+    g++ \
+    make \
+    openssl-dev \
+    icu-dev \
+    libzip-dev \
+    unzip \
+    supervisor \
+    nginx 
+
+# Install PHP extensions
+RUN docker-php-ext-install \
+    bcmath \
+    pdo_mysql \
+    intl \
+    zip
+
+# Configure nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+# RUN rm /etc/nginx/conf.d/default.conf
+
+# Configure supervisord
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Install composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# Set the working directory
+WORKDIR /var/www
+
+# Copy composer.json and composer.lock files
+COPY composer.json composer.lock ./
+
+# Install dependencies
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+# Copy the application code
+COPY . .
+
+# Set the necessary permissions
+RUN chown -R www-data:www-data /var/www
+
+# Expose ports
+EXPOSE 80
+
+# Start supervisord
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# CMD service nginx start && php-fpm --daemonize && nginx -g "daemon off;"
+# CMD systemctl start nginx && systemctl start php-fpm && nginx -g "daemon off;"
+# CMD nginx && php-fpm

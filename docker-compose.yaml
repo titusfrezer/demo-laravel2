@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    image: laravel_docker_app:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - app-network
+  
+  # db:
+  #   image: mysql:5.7
+  #   restart: always
+  #   environment:
+  #     MYSQL_DATABASE: laravel
+  #     MYSQL_USER: laravel
+  #     MYSQL_PASSWORD: secret
+  #     MYSQL_ROOT_PASSWORD: secret
+  #   volumes:
+  #     - dbdata:/var/lib/mysql
+  #   networks:
+  #     - app-network
+
+# volumes:
+#   dbdata:
+
+networks:
+  app-network:
+    driver: bridge
