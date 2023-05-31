@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,5 @@ Route::get('/', function () {
 });
 
 Route::get('/test', function () {
-
-    dd('hi haile and frezer');
+dd(User::all());
 });
